@@ -1,0 +1,29 @@
+from microbit import *
+import music
+import radio
+
+radio.on()
+radio.config(channel=69)
+
+
+
+while True:
+    
+    message = ""
+
+    if button_a.is_pressed():
+        message = message + "DOT"
+    
+    elif button_b.is_pressed():
+        message = message + "DASH"
+        
+    elif button_a.is_pressed() and button_b.is_pressed():
+        message = ""
+    
+    elif accelerometer.was_gesture("shake"):
+        radio.send(message)
+        
+    received = radio.receive()
+    display.scroll(receive)
+    
+        
