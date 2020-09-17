@@ -1,0 +1,45 @@
+from microbit import *
+import radio
+
+radio.on()
+radio.config(channel=69, length=251, queue=5)
+
+alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]                    # 0 = DOT/1 = DASH
+alphaIndex = 0
+sendStr = ""
+
+display.show(alphabet[alphaIndex])
+
+while True:
+    if button_a.was_pressed():
+        alphaIndex = alphaIndex - 1
+        if alphaIndex > len(alphabet)-1:
+            alphaIndex = 0
+        display.show(alphabet[alphaIndex])
+        sleep(125)
+        
+
+    if button_b.was_pressed():
+        alphaIndex = alphaIndex + 1
+        if alphaIndex > len(alphabet)-1:
+            alphaIndex = 0
+        display.show(alphabet[alphaIndex])
+        sleep(125)
+       
+    
+    
+    if button_a.was_pressed() and button_b.was_pressed():
+        sendStr = sendStr + alphabet[alphaIndex]
+        print(sendStr)
+    
+    if accelerometer.was_gesture("shake"):
+        radio.send(sendStr)
+        sleep(500)
+        display.scroll("SENT")
+        
+    
+    incoming = radio.receive()
+
+    if incoming:
+        display.scroll(incoming)
+        sleep(1000)
