@@ -1,0 +1,28 @@
+from microbit import *
+import radio
+
+radio.on()
+radio.config(channel=69, length=251, queue=5)
+
+alphabet = ["", ".", "-"]                    # 0 = DOT/1 = DASH
+alphaIndex = 0
+
+display.show(alphabet[alphaIndex])
+
+while True:
+    if button_a.was_pressed():
+        alphaIndex = alphaIndex + 1
+        if alphaIndex > len(alphabet)-1:
+            alphaIndex = 0
+        display.show(alphabet[alphaIndex])
+        sleep(125)
+
+    if button_b.was_pressed():
+        radio.send(alphabet[alphaIndex])
+        sleep(125)
+
+    incoming = radio.receive()
+
+    if incoming:
+        display.scroll(incoming)
+        display.show(alphabet[alphaIn
