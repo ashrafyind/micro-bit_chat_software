@@ -1,0 +1,54 @@
+import microbit
+import radio
+import music
+
+radio.on()
+
+
+channelIndex = 1  
+
+alphabet = ["A", "B", "C", "D", "E", "F", "H", "I", "J" "K", "L", "M", 
+"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", 
+"0", "1", "2", "3", "4", "5", "6", "7", "8" "9"]             
+alphaIndex = 0
+sendStr = ""
+
+microbit.display.show(alphabet[alphaIndex])
+
+while True:
+    radio.config(channel=69, length=251, queue=5)
+    if microbit.button_a.was_pressed():
+        alphaIndex = alphaIndex + 1
+        if alphaIndex > len(alphabet)- 1:
+            alphaIndex = 0;
+        microbit.display.show(alphabet[alphaIndex])
+        microbit.sleep(125)
+
+    if microbit.button_b.was_pressed():
+        radio.send(alphabet[alphaIndex])
+        microbit.sleep(125)
+        
+    if microbit.accelerometer.was_gesture("left"):
+        sendStr = sendStr + alphabet[alphaIndex]
+        print(sendStr)
+        
+    if microbit.accelerometer.was_gesture("shake"):
+        radio.send(sendStr)
+        microbit.sleep(500)
+        microbit.display.scroll("SENT")
+        sendStr = ""
+    
+    if microbit.accelerometer.was_gesture("down"):
+        channelIndex = channelIndex + 1
+        if channelIndex > 2:
+            channelIndex = 1
+    
+    
+
+
+    incoming = radio.receive()
+
+    if incoming:
+        microbit.display.scroll(incoming)
+        music.play(music.DADADADUM)
+        microbit.display.show(alphabet[alphaIndex])
